@@ -1,4 +1,4 @@
- //写cookie
+    //写cookie
     function addCookie(objName,objValue,objDays){
         var str = objName + "=" + escape(objValue);
         if(objDays > 0){
@@ -61,7 +61,9 @@
         try{
             followShowsArray.forEach(function(element,index){
               var elementArray = getCookie(element).split(",");
-              if(parseInt(elementArray[2])<parseInt(elementArray[4])){
+              console.log(parseInt(elementArray[2])+1);
+              console.log(parseInt(elementArray[4]));
+              if(parseInt(elementArray[2])+1<parseInt(elementArray[4])){
                   if(confirm("找到已更新的追剧："+elementArray[0]+"("+String(parseInt(elementArray[2])+1)+"/"+elementArray[4]+")，是否前去追该剧？")){
                       returnElement = element;
                       throw new Error("找到已更新的追剧："+elementArray[0]);
@@ -77,7 +79,7 @@
                     {
                         setCookie(element,latestNo,4);
                         setCookie(element,new Date().getFullYear()+"."+new Date().getMonth()+"."+new Date().getDate(),5);
-                        if(parseInt(elementArray[2])<parseInt(latestNo)){//还没开始看的剧是""false不自己追剧
+                        if(parseInt(elementArray[2])+1<parseInt(latestNo)){//还没开始看的剧是""false不自己追剧
                             if(confirm("找到已更新的追剧："+elementArray[0]+"("+String(parseInt(elementArray[2])+1)+"/"+parseInt(latestNo)+")，是否前去追该剧？")){
                                 returnElement = element;
                                 throw new Error("找到已更新的追剧："+elementArray[0]);
