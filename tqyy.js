@@ -1,4 +1,4 @@
-    //写cookie
+ //写cookie
     function addCookie(objName,objValue,objDays){
         var str = objName + "=" + escape(objValue);
         if(objDays > 0){
@@ -55,25 +55,42 @@
     }
     //遍历追剧未看的show
     function getHaveNotSeenShow(){
+        var returnElement = null;
         var followShowsArray = getCookie("followShows").split(",");
-        followShowsArray.forEach(function(element,index){
-          var elementArray = getCookie(element).split(",");
-          if(elementArray[2]<elementArray[4]){
-            return elementArray[0];
-          }else{
-            if(elementArray[5]!=new Date().getFullYear()+"."+new Date().getMonth()+"."+new Date().getDate())
-            {
-              var latestNo;
-              $.get(elementArray[0].split("bf")[0],function(data){latestNo=data.match(/(<small class="newscore">.*<\/small>)/)[0].match(/\d+/)[0]});
-              setCookie(element,4,latestNo);
-              setCookie(element,5,new Date().getFullYear()+"."+new Date().getMonth()+"."+new Date().getDate());
-              if(elementArray[2]<latestNo){
-                return elementArray[0];
+        //element = followShowsArray[0];
+        try{
+            followShowsArray.forEach(function(element,index){
+              var elementArray = getCookie(element).split(",");
+              if(parseInt(elementArray[2])<parseInt(elementArray[4])){
+                  if(confirm("找到已更新的追剧："+elementArray[0]+"("+String(parseInt(elementArray[2])+1)+"/"+elementArray[4]+")，是否前去追该剧？")){
+                      returnElement = element;
+                      throw new Error("找到已更新的追剧："+elementArray[0]);
+                  }
+              }else{
+                if(elementArray[5]!=new Date().getFullYear()+"."+new Date().getMonth()+"."+new Date().getDate())
+                {
+                  var latestNo = null;
+                  $.get(elementArray[1].split("bf")[0],function(data){latestNo=data.match(/(<small class="newscore">.*<\/small>)/)[0].match(/\d+/)[0]});
+                  console.log("等待获取最新集数...")
+                  setTimeout(function(){
+                    if(latestNo != null && parseInt(latestNo) > 0)
+                    {
+                        setCookie(element,latestNo,4);
+                        setCookie(element,new Date().getFullYear()+"."+new Date().getMonth()+"."+new Date().getDate(),5);
+                        if(parseInt(elementArray[2])<parseInt(latestNo)){//还没开始看的剧是""false不自己追剧
+                            if(confirm("找到已更新的追剧："+elementArray[0]+"("+String(parseInt(elementArray[2])+1)+"/"+parseInt(latestNo)+")，是否前去追该剧？")){
+                                returnElement = element;
+                                throw new Error("找到已更新的追剧："+elementArray[0]);
+                            }
+                        }
+                    }
+                  },2000);
+
+                }
               }
-            }
-          }
-        });
-        return null;
+            });
+        }catch(e){console.log(e);}
+        return returnElement;
     }
     //点击追剧
     function zj(){
@@ -95,6 +112,16 @@
         else if(getCookie("followShows").split(",")[0]==element){addCookie("followShows",getCookie("followShows").replace(element+",",""),Infinity);}
         else{addCookie("followShows",getCookie("followShows").replace(","+element,""),Infinity);}
     }
+    //一键追剧
+    function onekeyZJ(){
+        addCookie("isFollowing",1,0);//仅浏览器进程
+        var nextHaveNotSeenShow=getHaveNotSeenShow();
+        if(nextHaveNotSeenShow)
+        {
+          document.location.href=getCookie(nextHaveNotSeenShow).split(",")[1];
+        }
+    }
+    //tqyy主页显示追剧列表
     function reSumarry() {
         if(document.getElementById("sumarry")!=null) {document.getElementById("sumarry").innerHTML="";}
         if(getCookie("followShows") !=null && getCookie("followShows") != ""){
@@ -102,13 +129,14 @@
               var followShowsArray = getCookie("followShows").split(",")
               followShowsArray.forEach(function(element){
                 followShowsElementArray=getCookie(element).split(",");
-                if(followShowsElementArray[2]==""){currentShowStr = "0";}else{currentShowStr = followShowsElementArray[2];}//当前剧集
+                if(followShowsElementArray[2]==""){currentShowStr = "-1";}else{currentShowStr = String(parseInt(followShowsElementArray[2])+1);}//当前剧集
                 latestShowStr ="<a onclick=\"getLastNo('"+element+"');reSumarry();\">"+followShowsElementArray[4];//最新剧集
                 checkoutTimeStr ="<a onclick=\"getLastNo('"+element+"');reSumarry();\">"+followShowsElementArray[5];//更新时间
                 showNameStr = "<a href=\""+followShowsElementArray[1] +"\">"+followShowsElementArray[0]+"</a>";//剧集中文名
                 cancelZJStr = "<a onclick=\"if(confirm('确定取消追剧？')){qxzj('"+element+"')};reSumarry('"+element+"');\">[x]</a>";//
                 innerHtmlStr+=cancelZJStr+"&nbsp;"+checkoutTimeStr+"，"+currentShowStr+"/"+latestShowStr+"，"+showNameStr+"</br>";
               });
+              innerHtmlStr+="<a onclick=\"onekeyZJ()\">一键追剧</a></br>";
               innerHtmlStr+="</font></div>";
               document.getElementsByClassName("seek")[0].innerHTML=orgseekHTML+innerHtmlStr;
         }
