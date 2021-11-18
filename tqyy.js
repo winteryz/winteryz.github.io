@@ -61,10 +61,8 @@
         try{
             followShowsArray.forEach(function(element,index){
               var elementArray = getCookie(element).split(",");
-              console.log(parseInt(elementArray[2])+1);
-              console.log(parseInt(elementArray[4]));
-              if(parseInt(elementArray[2])+1<parseInt(elementArray[4])){
-                  if(confirm("找到已更新的追剧："+elementArray[0]+"("+String(parseInt(elementArray[2])+1)+"/"+elementArray[4]+")，是否前去追该剧？")){
+              if(elementArray[2]!=parseInt(elementArray[4])){
+                  if(confirm("找到已更新的追剧："+elementArray[0]+"("+elementArray[2]+"/"+elementArray[4]+")，是否前去追该剧？")){
                       returnElement = element;
                       throw new Error("找到已更新的追剧："+elementArray[0]);
                   }
@@ -72,15 +70,16 @@
                 if(elementArray[5]!=new Date().getFullYear()+"."+new Date().getMonth()+"."+new Date().getDate())
                 {
                   var latestNo = null;
-                  $.get(elementArray[1].split("bf")[0],function(data){latestNo=data.match(/(<small class="newscore">.*<\/small>)/)[0].match(/\d+/)[0]});
+                  //$.get(elementArray[1].split("bf")[0],function(data){latestNo=data.match(/(<small class="newscore">.*<\/small>)/)[0].match(/\d+/)[0]});
+                  $.get(elementArray[1].split("bf")[0],function(data){latestNo=data.match(/(target="_blank">.{1,15}<\/a><\/li><\/ul><\/div><\/div><div class=\"cl\"><\/div><\/div><div)/)[0].replace('target="_blank">','').replace('</a></li></ul></div></div><div class="cl"></div></div><div','')});
                   console.log("等待获取最新集数...")
                   setTimeout(function(){
                     if(latestNo != null && parseInt(latestNo) > 0)
                     {
                         setCookie(element,latestNo,4);
                         setCookie(element,new Date().getFullYear()+"."+new Date().getMonth()+"."+new Date().getDate(),5);
-                        if(parseInt(elementArray[2])+1<parseInt(latestNo)){//还没开始看的剧是""false不自己追剧
-                            if(confirm("找到已更新的追剧："+elementArray[0]+"("+String(parseInt(elementArray[2])+1)+"/"+parseInt(latestNo)+")，是否前去追该剧？")){
+                        if(elementArray[2]!=parseInt(latestNo)){//还没开始看的剧是""false不自己追剧
+                            if(confirm("找到已更新的追剧："+elementArray[0]+"("+elementArray[2]+"/"+parseInt(latestNo)+")，是否前去追该剧？")){
                                 returnElement = element;
                                 throw new Error("找到已更新的追剧："+elementArray[0]);
                             }
@@ -131,7 +130,7 @@
               var followShowsArray = getCookie("followShows").split(",")
               followShowsArray.forEach(function(element){
                 followShowsElementArray=getCookie(element).split(",");
-                if(followShowsElementArray[2]==""){currentShowStr = "-1";}else{currentShowStr = String(parseInt(followShowsElementArray[2])+1);}//当前剧集
+                if(followShowsElementArray[2]==""){currentShowStr = "-1";}else{currentShowStr = followShowsElementArray[2];}//当前剧集
                 latestShowStr ="<a onclick=\"getLastNo('"+element+"');reSumarry();\">"+followShowsElementArray[4];//最新剧集
                 checkoutTimeStr ="<a onclick=\"getLastNo('"+element+"');reSumarry();\">"+followShowsElementArray[5];//更新时间
                 showNameStr = "<a href=\""+followShowsElementArray[1] +"\">"+followShowsElementArray[0]+"</a>";//剧集中文名
@@ -147,7 +146,8 @@
     function getLastNo(element){
       var lastNo;
       //最新集数
-      $.get(getCookie(element).split(",")[1].split("bf")[0],function(data){setCookie(element,data.match(/(<small class="newscore">.*<\/small>)/)[0].match(/\d+/)[0],4)});
+      //$.get(getCookie(element).split(",")[1].split("bf")[0],function(data){setCookie(element,data.match(/(<small class="newscore">.*<\/small>)/)[0].match(/\d+/)[0],4)});
+      $.get(getCookie(element).split(",")[1].split("bf")[0],function(data){setCookie(element,data.match(/(target="_blank">.{1,15}<\/a><\/li><\/ul><\/div><\/div><div class=\"cl\"><\/div><\/div><div)/)[0].replace('target="_blank">','').replace('</a></li></ul></div></div><div class="cl"></div></div><div',''))});
       //今天
       setCookie(element,new Date().getFullYear()+"."+new Date().getMonth()+"."+new Date().getDate(),5);
     }
@@ -161,3 +161,4 @@
       //如果马上使用会找不到，因为还没有加载进来
       //getCookie("followShows");
     }
+    
