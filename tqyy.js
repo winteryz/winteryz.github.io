@@ -61,7 +61,7 @@
         try{
             followShowsArray.forEach(function(element,index){
               var elementArray = getCookie(element).split(",");
-              if(elementArray[2]!=parseInt(elementArray[4])){
+              if(elementArray[2] != "" && elementArray[2]!=parseInt(elementArray[4])){
                   if(confirm("找到已更新的追剧："+elementArray[0]+"("+elementArray[2]+"/"+elementArray[4]+")，是否前去追该剧？")){
                       returnElement = element;
                       throw new Error("找到已更新的追剧："+elementArray[0]);
@@ -78,7 +78,7 @@
                     {
                         setCookie(element,latestNo,4);
                         setCookie(element,new Date().getFullYear()+"."+new Date().getMonth()+"."+new Date().getDate(),5);
-                        if(elementArray[2]!=parseInt(latestNo)){//还没开始看的剧是""false不自己追剧
+                        if(elementArray[2] != "" && elementArray[2]!=parseInt(latestNo)){//还没开始看的剧是""false不自己追剧
                             if(confirm("找到已更新的追剧："+elementArray[0]+"("+elementArray[2]+"/"+parseInt(latestNo)+")，是否前去追该剧？")){
                                 returnElement = element;
                                 throw new Error("找到已更新的追剧："+elementArray[0]);
@@ -161,3 +161,4 @@
       //如果马上使用会找不到，因为还没有加载进来
       //getCookie("followShows");
     }
+    
