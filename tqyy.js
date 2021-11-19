@@ -119,7 +119,10 @@
         var nextHaveNotSeenShow=getHaveNotSeenShow();
         if(nextHaveNotSeenShow)
         {
-          document.location.href=getCookie(nextHaveNotSeenShow).split(",")[1];
+          //document.location.href=getCookie(nextHaveNotSeenShow).split(",")[1];
+          var pagePath = getCookie(nextHaveNotSeenShow).split(",")[1];
+          var pagePathDown = pagePath.split("-")[0]+"-"+pagePath.split("-")[1]+"-"+(parseInt(pagePath.split("-")[2].split(".")[0])+1)+"."+pagePath.split("-")[2].split(".")[1];
+          document.location.href=pagePathDown;
         }
     }
     //tqyy主页显示追剧列表
