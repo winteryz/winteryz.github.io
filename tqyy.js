@@ -164,3 +164,9 @@
       //如果马上使用会找不到，因为还没有加载进来
       //getCookie("followShows");
     }
+    //四舍五入取整到10
+    function fixNum(num){
+      var fixn=Math.floor(num / 10) * 10;
+      if(num-fixn>=5.0){fixn+=10}
+      return fixn;
+    }
