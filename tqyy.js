@@ -150,7 +150,7 @@
       var lastNo;
       //最新集数
       //$.get(getCookie(element).split(",")[1].split("bf")[0],function(data){setCookie(element,data.match(/(<small class="newscore">.*<\/small>)/)[0].match(/\d+/)[0],4)});
-      $.get(getCookie(element).split(",")[1].split("bf")[0],function(data){setCookie(element,data.match(/(target="_blank">.{1,15}<\/a><\/li><\/ul><\/div><\/div><div class=\"cl\"><\/div><\/div><div)/)[0].replace('target="_blank">','').replace('</a></li></ul></div></div><div class="cl"></div></div><div',''))});
+      $.get(getCookie(element).split(",")[1].split("bf")[0],function(data){setCookie(element,data.match(/(target="_blank">.{1,15}<\/a><\/li><\/ul><\/div><\/div><div class=\"cl\"><\/div><\/div><div)/)[0].replace('target="_blank">','').replace('</a></li></ul></div></div><div class="cl"></div></div><div',''),4)});
       //今天
       setCookie(element,new Date().getFullYear()+"."+new Date().getMonth()+"."+new Date().getDate(),5);
     }
