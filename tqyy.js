@@ -71,15 +71,16 @@
                 {
                   var latestNo = null;
                   //$.get(elementArray[1].split("bf")[0],function(data){latestNo=data.match(/(<small class="newscore">.*<\/small>)/)[0].match(/\d+/)[0]});
-                  $.get(elementArray[1].split("bf")[0],function(data){latestNo=data.match(/(target="_blank">.{1,15}<\/a><\/li><\/ul><\/div><\/div><div class=\"cl\"><\/div><\/div><div)/)[0].replace('target="_blank">','').replace('</a></li></ul></div></div><div class="cl"></div></div><div','')});
+                  $.get(elementArray[1].split("bf")[0],function(data){latestNo=data.match(/(target="_blank">.{1,15}<\/a><\/li><\/ul><\/div><\/div><div class=\"cl\"><\/div><\/div><div)/)[0].replace('target="_blank">','').replace('</a></li></ul></div></div><div class="cl"></div></div><div','').replace("��","第").replace("��","集")});
                   console.log("等待获取最新集数...")
                   setTimeout(function(){
-                    if(latestNo != null && parseInt(latestNo) > 0)
+                    //if(latestNo != null && parseInt(latestNo) > 0)
+                    if(latestNo != null && latestNo != "")
                     {
                         setCookie(element,latestNo,4);
                         setCookie(element,new Date().getFullYear()+"."+new Date().getMonth()+"."+new Date().getDate(),5);
                         if(elementArray[2] != "" && elementArray[2]!=latestNo){//还没开始看的剧是""false不自己追剧
-                            if(confirm("找到已更新的追剧："+elementArray[0]+"("+elementArray[2]+"/"+parseInt(latestNo)+")，是否前去追该剧？")){
+                            if(confirm("找到已更新的追剧："+elementArray[0]+"("+elementArray[2]+"/"+latestNo+")，是否前去追该剧？")){
                                 returnElement = element;
                                 throw new Error("找到已更新的追剧："+elementArray[0]);
                             }
